@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In | Kaushal Setu — Your Skills. Your Future.{% endblock %}
+
+{% block unauth_content %}
+<div class="auth-container">
+    <!-- Left Visual Panel -->
+    <div class="auth-visual-panel">
+        <div>
+            <!-- Brand & Badges -->
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div class="brand-mark">
+                    <div class="brand-icon">KS</div>
+                    <div>
+                        <div class="brand-title">Kaushal Setu</div>
+                        <div class="brand-tagline">Assess. Learn. Apply.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hero Headline -->
+            <div class="mt-4 mb-4">
+                <span class="badge bg-teal bg-opacity-25 text-info px-3 py-1 mb-2 rounded-pill fw-semibold" style="font-size: 0.75rem;">
+                    Career Readiness Platform
+                </span>
+                <h1 class="display-6 fw-bold text-white mb-2">Your Skills.<br><span style="color: var(--teal-light);">Your Future.</span></h1>
+                <p class="text-white-50" style="font-size: 0.95rem; line-height: 1.6;">
+                    Bridging the skills-to-employment gap for college students through transparent diagnostics, tailored 30-day learning roadmaps, and verified career matching.
+                </p>
+            </div>
+
+            <!-- Value Proposition Features -->
+            <div class="auth-features mt-4">
+                <div class="auth-feature-card">
+                    <div class="auth-feature-icon"><i class="bi bi-bullseye"></i></div>
+                    <div>
+                        <h6 class="text-white mb-1 fw-semibold">Diagnostic Skill Assessment</h6>
+                        <p class="text-white-50 small mb-0">Role-specific multi-domain quiz estimating core technical proficiency and project readiness.</p>
+                    </div>
+                </div>
+
+                <div class="auth-feature-card">
+                    <div class="auth-feature-icon"><i class="bi bi-graph-up"></i></div>
+                    <div>
+                        <h6 class="text-white mb-1 fw-semibold">Rule-Based Gap Engine</h6>
+                        <p class="text-white-50 small mb-0">Calculates exact skill deficits against benchmark employability standards with transparent math.</p>
+                    </div>
+                </div>
+
+                <div class="auth-feature-card">
+                    <div class="auth-feature-icon"><i class="bi bi-map-fill"></i></div>
+                    <div>
+                        <h6 class="text-white mb-1 fw-semibold">Personalized 30-Day Roadmap</h6>
+                        <p class="text-white-50 small mb-0">4 structured weekly milestones with legitimate free resources and hands-on mini-projects.</p>
+                    </div>
+                </div>
+
+                <div class="auth-feature-card">
+                    <div class="auth-feature-icon"><i class="bi bi-briefcase-fill"></i></div>
+                    <div>
+                        <h6 class="text-white mb-1 fw-semibold">Skill-Matched Opportunities</h6>
+                        <p class="text-white-50 small mb-0">Match percentage based on required skills overlap, highlighting strengths and missing requirements.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-3 border-top border-white border-opacity-10 text-white-50 small d-flex justify-content-between align-items-center">
+            <span>Career Development & Employability</span>
+            <span>Assess. Learn. Apply.</span>
+        </div>
+    </div>
+
+    <!-- Right Form Panel -->
+    <div class="auth-form-panel">
+        <div class="auth-form-card">
+            <!-- Mobile Brand Header -->
+            <div class="d-lg-none text-center mb-4">
+                <div class="brand-icon mx-auto mb-2" style="width: 44px; height: 44px; font-size: 1.3rem;">KS</div>
+                <h4 class="fw-bold mb-0 text-navy">Kaushal Setu</h4>
+                <div class="text-muted small">Your Skills. Your Future.</div>
+            </div>
+
+            <!-- Tab Switcher -->
+            <ul class="nav nav-tabs auth-tabs mb-4 justify-content-center" id="authTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if active_tab != 'register' %}active{% endif %}" id="login-tab" data-bs-toggle="tab" data-bs-target="#login-tab-pane" type="button" role="tab">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if active_tab == 'register' %}active{% endif %}" id="register-tab" data-bs-toggle="tab" data-bs-target="#register-tab-pane" type="button" role="tab">
+                        <i class="bi bi-person-plus me-1"></i> Create Account
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="authTabContent">
+                <!-- ==================== SIGN IN TAB ==================== -->
+                <div class="tab-pane fade {% if active_tab != 'register' %}show active{% endif %}" id="login-tab-pane" role="tabpanel">
+                    <div class="mb-4">
+                        <h4 class="fw-bold text-navy mb-1">Welcome back</h4>
+                        <p class="text-muted small">Enter your college email and password to access your dashboard.</p>
+                    </div>
+
+                    <form action="{{ url_for('login') }}" method="POST" class="needs-validation" novalidate>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <input type="hidden" name="action" value="login">
+
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label small fw-semibold text-secondary">College / Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+                                <input type="email" class="form-control border-start-0 ps-0" id="loginEmail" name="email" value="{{ email or '' }}" placeholder="student@example.com" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label for="loginPassword" class="form-label small fw-semibold text-secondary mb-0">Password</label>
+                                <a href="#" class="small text-teal text-decoration-none fw-medium" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Forgot password?</a>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock"></i></span>
+                                <input type="password" class="form-control border-start-0 border-end-0 px-0" id="loginPassword" name="password" placeholder="Enter your password" required>
+                                <button class="btn btn-outline-secondary border-start-0 toggle-password-btn" type="button" data-target="loginPassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe" name="remember" value="1">
+                            <label class="form-check-label small text-muted" for="rememberMe">Keep me signed in for 24 hours</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-teal w-100 py-2 mb-3">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Dashboard
+                        </button>
+
+                        <!-- Quick Demo Fill Helper -->
+                        <div class="p-2 rounded bg-light border text-center mb-2">
+                            <span class="small text-muted d-block mb-1" style="font-size: 0.75rem;">Quick Demo Test Credentials (student@example.com / Password123):</span>
+                            <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size: 0.75rem;" onclick="document.getElementById('loginEmail').value='student@example.com'; document.getElementById('loginPassword').value='Password123';">
+                                <i class="bi bi-magic me-1 text-teal"></i> Fill Demo Student Account
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-3 pt-3 border-top">
+                        <span class="small text-muted">New to Kaushal Setu?</span>
+                        <a href="javascript:void(0)" onclick="document.getElementById('register-tab').click();" class="small text-teal fw-semibold ms-1 text-decoration-none">Create a student account</a>
+                    </div>
+                </div>
+
+                <!-- ==================== CREATE ACCOUNT TAB ==================== -->
+                <div class="tab-pane fade {% if active_tab == 'register' %}show active{% endif %}" id="register-tab-pane" role="tabpanel">
+                    <div class="mb-3">
+                        <h4 class="fw-bold text-navy mb-1">Create Student Account</h4>
+                        <p class="text-muted small">Register to start your personalized skill diagnostic & employability roadmap.</p>
+                    </div>
+
+                    <form action="{{ url_for('login') }}" method="POST" class="needs-validation">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <input type="hidden" name="action" value="register">
+
+                        <div class="mb-2">
+                            <label for="regFullName" class="form-label small fw-semibold text-secondary">Full Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                                <input type="text" class="form-control border-start-0 ps-0" id="regFullName" name="full_name" value="{{ reg_name or '' }}" placeholder="Aditya Sharma" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label for="regEmail" class="form-label small fw-semibold text-secondary">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+                                <input type="email" class="form-control border-start-0 ps-0" id="regEmail" name="email" value="{{ reg_email or '' }}" placeholder="student@example.com" required>
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                <label for="regEdu" class="form-label small fw-semibold text-secondary">Education Level</label>
+                                <select class="form-select" id="regEdu" name="education_level" required>
+                                    <option value="" disabled {% if not reg_edu %}selected{% endif %}>Select...</option>
+                                    <option value="BCA" {% if reg_edu == 'BCA' %}selected{% endif %}>BCA</option>
+                                    <option value="B.Tech CS/IT" {% if reg_edu == 'B.Tech CS/IT' %}selected{% endif %}>B.Tech CS/IT</option>
+                                    <option value="MCA" {% if reg_edu == 'MCA' %}selected{% endif %}>MCA</option>
+                                    <option value="B.Sc Computer Science" {% if reg_edu == 'B.Sc Computer Science' %}selected{% endif %}>B.Sc (CS/IT)</option>
+                                    <option value="Diploma in IT" {% if reg_edu == 'Diploma in IT' %}selected{% endif %}>Diploma in IT</option>
+                                    <option value="Other Degree" {% if reg_edu == 'Other Degree' %}selected{% endif %}>Other Degree</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label for="regCollege" class="form-label small fw-semibold text-secondary">College / Institute</label>
+                                <input type="text" class="form-control" id="regCollege" name="college_name" value="{{ reg_college or '' }}" placeholder="e.g. University / College">
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label for="regPassword" class="form-label small fw-semibold text-secondary">Password (Min. 6 characters)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shield-lock"></i></span>
+                                <input type="password" class="form-control border-start-0 border-end-0 px-0" id="regPassword" name="password" placeholder="Create strong password" required minlength="6">
+                                <button class="btn btn-outline-secondary border-start-0 toggle-password-btn" type="button" data-target="regPassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="regConfirmPassword" class="form-label small fw-semibold text-secondary">Confirm Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shield-check"></i></span>
+                                <input type="password" class="form-control border-start-0 border-end-0 px-0" id="regConfirmPassword" name="confirm_password" placeholder="Confirm your password" required minlength="6">
+                                <button class="btn btn-outline-secondary border-start-0 toggle-password-btn" type="button" data-target="regConfirmPassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-teal w-100 py-2 mb-2">
+                            <i class="bi bi-person-check me-1"></i> Register & Set Up Profile
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-2 pt-2 border-top">
+                        <span class="small text-muted">Already have an account?</span>
+                        <a href="javascript:void(0)" onclick="document.getElementById('login-tab').click();" class="small text-teal fw-semibold ms-1 text-decoration-none">Sign in here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Honest Forgot Password Information Modal -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-navy text-white">
+                <h5 class="modal-title fs-6 fw-bold" id="forgotPasswordModalLabel">
+                    <i class="bi bi-info-circle-fill me-2 text-info"></i> Password Recovery Notice
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="alert alert-info py-2 small mb-3">
+                    <strong>Local Demonstration Environment:</strong> External SMTP email sending is not configured in this standalone offline server to avoid relying on paid or unverified third-party email APIs.
+                </div>
+                <h6 class="fw-bold mb-2">How to test password changes:</h6>
+                <ol class="small text-muted ps-3 mb-3">
+                    <li class="mb-1">If you know your current credentials, log in and visit the <strong>Settings</strong> page to update your password securely.</li>
+                    <li class="mb-1">You can register a new test student account with any valid email in seconds.</li>
+                    <li>Passwords are stored using industry-standard cryptographic hashes (PBKDF2/SHA256 via Werkzeug).</li>
+                </ol>
+            </div>
+            <div class="modal-footer bg-light py-2">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

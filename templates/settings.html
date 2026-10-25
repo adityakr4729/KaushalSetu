@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Settings | Kaushal Setu{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Header -->
+    <div class="mb-4">
+        <h3 class="fw-bold text-navy mb-1">Account & Platform Settings</h3>
+        <p class="text-muted small mb-0">Manage your security credentials, test resets, and platform configuration.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Password Change Card -->
+        <div class="col-lg-6">
+            <div class="card card-custom border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="fw-bold text-navy mb-0">
+                        <i class="bi bi-shield-lock-fill text-teal me-2"></i> Update Password
+                    </h6>
+                </div>
+                <div class="card-body p-4">
+                    <form action="{{ url_for('settings') }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <input type="hidden" name="action" value="update_password">
+
+                        <div class="mb-3">
+                            <label for="current_password" class="form-label small fw-semibold text-secondary">Current Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="current_password" name="current_password" required>
+                                <button class="btn btn-outline-secondary toggle-password-btn" type="button" data-target="current_password">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="new_password" class="form-label small fw-semibold text-secondary">New Password (Min. 6 characters)</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="new_password" name="new_password" required minlength="6">
+                                <button class="btn btn-outline-secondary toggle-password-btn" type="button" data-target="new_password">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="confirm_new_password" class="form-label small fw-semibold text-secondary">Confirm New Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="confirm_new_password" name="confirm_new_password" required minlength="6">
+                                <button class="btn btn-outline-secondary toggle-password-btn" type="button" data-target="confirm_new_password">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-teal">
+                            <i class="bi bi-check2-circle me-1"></i> Update Password
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Information Card -->
+        <div class="col-lg-6">
+            <div class="card card-custom border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="fw-bold text-navy mb-0">
+                        <i class="bi bi-person-badge text-teal me-2"></i> Account Details
+                    </h6>
+                </div>
+                <div class="card-body p-4 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="p-3 bg-light rounded-3 mb-3 border">
+                            <div class="row g-2 small">
+                                <div class="col-5 text-muted">Account ID:</div>
+                                <div class="col-7 fw-semibold font-monospace">#{{ user.id }}</div>
+
+                                <div class="col-5 text-muted">Full Name:</div>
+                                <div class="col-7 fw-semibold">{{ user.full_name }}</div>
+
+                                <div class="col-5 text-muted">Email Address:</div>
+                                <div class="col-7 fw-semibold text-truncate">{{ user.email }}</div>
+
+                                <div class="col-5 text-muted">Institution:</div>
+                                <div class="col-7 fw-semibold">{{ user.college_name or 'Independent Learner' }}</div>
+
+                                <div class="col-5 text-muted">Education Level:</div>
+                                <div class="col-7 fw-semibold">{{ user.education_level }}</div>
+
+                                <div class="col-5 text-muted">Member Since:</div>
+                                <div class="col-7 fw-semibold">{{ user.created_at | date_only }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Student Learning Management -->
+                        <div class="p-3 bg-light rounded-3 mb-2 border">
+                            <h6 class="fw-bold text-dark mb-1" style="font-size: 0.9rem;">Reset Roadmap Progress</h6>
+                            <p class="text-muted small mb-2">Clears all checked tasks if you wish to restart your 30-day learning curriculum from Day 1.</p>
+                            <form action="{{ url_for('settings') }}" method="POST" onsubmit="return confirm('Are you sure you want to reset your roadmap progress?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                <input type="hidden" name="action" value="reset_progress">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-arrow-counterclockwise me-1"></i> Restart Learning Roadmap
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="small text-muted pt-2 border-top">
+                        <i class="bi bi-shield-check text-success me-1"></i> Security: Session-secured, Werkzeug PBKDF2 encryption active
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System & Security Overview Card -->
+        <div class="col-12">
+            <div class="card card-custom border-0 shadow-sm p-4 bg-light">
+                <h6 class="fw-bold text-navy mb-2"><i class="bi bi-shield-check text-teal me-2"></i> Security Architecture & Production Readiness Note</h6>
+                <p class="text-muted small mb-2">
+                    In compliance with safe coding principles, <strong>Kaushal Setu</strong> implements server-side password hashing (Werkzeug PBKDF2), HTTP-only cookies, session-based CSRF protection, and parameterized SQLite queries to prevent SQL injection.
+                </p>
+                <div class="row g-2 text-muted small" style="font-size: 0.78rem;">
+                    <div class="col-md-4">&bull; <strong>Database:</strong> SQLite with foreign keys enabled & automated seeding</div>
+                    <div class="col-md-4">&bull; <strong>Production requirement:</strong> Enable HTTPS, set <code>SESSION_COOKIE_SECURE = True</code></div>
+                    <div class="col-md-4">&bull; <strong>Secret Keys:</strong> Loaded via environment variable with local fallback</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

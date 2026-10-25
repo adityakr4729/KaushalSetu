@@ -1,0 +1,492 @@
+/* ==========================================================================
+   Kaushal Setu — Bridging the Skills-to-Employment Gap
+   Career Development & Employability Platform
+   Palette: Dark Navy, Teal, White, Light Grey
+   ========================================================================== */
+
+:root {
+    --navy-darkest: #070d1e;
+    --navy-dark: #0b152b;
+    --navy-primary: #0f172a;
+    --navy-card: #1e293b;
+    --navy-light: #334155;
+    --teal-primary: #0d9488;
+    --teal-light: #14b8a6;
+    --teal-subtle: #ccfbf1;
+    --cyan-accent: #06b6d4;
+    --bg-light: #f8fafc;
+    --border-color: #e2e8f0;
+    --text-muted: #64748b;
+    --text-dark: #1e293b;
+    --white: #ffffff;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==========================================================================
+   Navigation Bar & Brand Mark
+   ========================================================================== */
+.navbar-custom {
+    background-color: var(--navy-dark);
+    border-bottom: 2px solid rgba(13, 148, 136, 0.3);
+    padding: 0.75rem 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.brand-mark {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+}
+
+.brand-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--teal-primary), var(--cyan-accent));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 1.15rem;
+    box-shadow: 0 2px 8px rgba(13, 148, 136, 0.4);
+}
+
+.brand-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: #ffffff;
+    line-height: 1.2;
+}
+
+.brand-tagline {
+    font-size: 0.7rem;
+    color: var(--teal-light);
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.college-badge {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+    font-size: 0.72rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* ==========================================================================
+   Sidebar & Layout
+   ========================================================================== */
+.app-wrapper {
+    display: flex;
+    flex: 1;
+    min-height: calc(100vh - 65px);
+}
+
+.sidebar {
+    width: 260px;
+    background-color: var(--navy-primary);
+    color: #cbd5e1;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.3s ease;
+}
+
+.sidebar-header {
+    padding: 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.sidebar-nav {
+    list-style: none;
+    padding: 0.75rem 0.5rem;
+    margin: 0;
+    flex: 1;
+}
+
+.nav-item-custom {
+    margin-bottom: 0.25rem;
+}
+
+.nav-link-custom {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 1rem;
+    color: #94a3b8;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.nav-link-custom:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.06);
+    transform: translateX(2px);
+}
+
+.nav-link-custom.active {
+    color: #ffffff;
+    background: linear-gradient(90deg, rgba(13, 148, 136, 0.25), rgba(13, 148, 136, 0.05));
+    border-left: 3px solid var(--teal-light);
+    font-weight: 600;
+}
+
+.nav-link-custom i {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.main-content {
+    flex: 1;
+    padding: 1.75rem;
+    background-color: #f1f5f9;
+    overflow-y: auto;
+}
+
+/* ==========================================================================
+   Split-Screen Login & Registration Screen
+   ========================================================================== */
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    background-color: var(--navy-darkest);
+}
+
+.auth-visual-panel {
+    flex: 1.1;
+    background: linear-gradient(135deg, #070d1e 0%, #0f172a 50%, #0b152b 100%);
+    position: relative;
+    padding: 3.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: #ffffff;
+    overflow: hidden;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.auth-visual-panel::before {
+    content: '';
+    position: absolute;
+    top: -150px;
+    right: -150px;
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, rgba(13, 148, 136, 0.25) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.auth-visual-panel::after {
+    content: '';
+    position: absolute;
+    bottom: -100px;
+    left: -100px;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.18) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.auth-feature-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 0.9rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    backdrop-filter: blur(10px);
+}
+
+.auth-feature-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(13, 148, 136, 0.2);
+    color: var(--teal-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.auth-form-panel {
+    flex: 0.9;
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem;
+    overflow-y: auto;
+}
+
+.auth-form-card {
+    width: 100%;
+    max-width: 440px;
+}
+
+/* ==========================================================================
+   Cards & UI Components
+   ========================================================================== */
+.card-custom {
+    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.card-custom:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07);
+}
+
+.metric-card {
+    border-radius: 12px;
+    padding: 1.25rem;
+    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.metric-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background-color: var(--teal-primary);
+}
+
+.metric-card.accent-navy::after { background-color: var(--navy-primary); }
+.metric-card.accent-teal::after { background-color: var(--teal-primary); }
+.metric-card.accent-warning::after { background-color: var(--warning); }
+.metric-card.accent-success::after { background-color: var(--success); }
+
+.metric-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+}
+
+.metric-value {
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: var(--navy-primary);
+    line-height: 1.1;
+}
+
+/* Buttons */
+.btn-teal {
+    background-color: var(--teal-primary);
+    color: #ffffff;
+    border: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-teal:hover {
+    background-color: #0f766e;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(13, 148, 136, 0.35);
+}
+
+.btn-navy {
+    background-color: var(--navy-primary);
+    color: #ffffff;
+    border: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-navy:hover {
+    background-color: #1e293b;
+    color: #ffffff;
+}
+
+/* Custom Tabs */
+.auth-tabs .nav-link {
+    font-weight: 600;
+    color: var(--text-muted);
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0;
+}
+
+.auth-tabs .nav-link.active {
+    color: var(--teal-primary);
+    border-bottom: 2px solid var(--teal-primary);
+    background: transparent;
+}
+
+/* Assessment Question Styling */
+.question-card {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.option-label {
+    display: flex;
+    align-items: center;
+    padding: 0.85rem 1.1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 0.6rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: #f8fafc;
+}
+
+.option-label:hover {
+    border-color: var(--teal-light);
+    background-color: #f0fdfa;
+}
+
+.option-label input[type="radio"]:checked + .option-text {
+    font-weight: 600;
+    color: var(--teal-primary);
+}
+
+.option-label.selected {
+    border-color: var(--teal-primary);
+    background-color: #f0fdfa;
+    box-shadow: 0 0 0 1px var(--teal-primary);
+}
+
+/* Roadmap Task Item */
+.roadmap-task-card {
+    border-left: 3px solid #cbd5e1;
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.85rem;
+    transition: all 0.2s ease;
+    border: 1px solid var(--border-color);
+}
+
+.roadmap-task-card.priority-focus {
+    border-left: 4px solid var(--warning);
+    background-color: #fffbeb;
+}
+
+.roadmap-task-card.task-done {
+    border-left: 4px solid var(--success);
+    background-color: #f0fdf4;
+    opacity: 0.9;
+}
+
+/* Opportunity Cards */
+.opportunity-card {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: #ffffff;
+    padding: 1.35rem;
+    margin-bottom: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.opportunity-card:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.demo-banner {
+    background-color: #fff7ed;
+    color: #9a3412;
+    border: 1px solid #fed7aa;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+/* Print Stylesheet for Formal Report */
+@media print {
+    body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        font-size: 11pt;
+    }
+    .navbar-custom,
+    .sidebar,
+    .no-print,
+    .btn,
+    .alert,
+    footer {
+        display: none !important;
+    }
+    .app-wrapper {
+        min-height: auto;
+    }
+    .main-content {
+        padding: 0 !important;
+        background: transparent !important;
+        width: 100% !important;
+    }
+    .card-custom, .metric-card {
+        border: 1px solid #cccccc !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+    }
+    .report-print-header {
+        display: block !important;
+        border-bottom: 2px solid #0f172a;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 992px) {
+    .auth-visual-panel {
+        display: none;
+    }
+    .auth-form-panel {
+        flex: 1;
+        padding: 1.5rem;
+    }
+    .sidebar {
+        position: fixed;
+        left: -260px;
+        top: 65px;
+        height: calc(100vh - 65px);
+        z-index: 1050;
+    }
+    .sidebar.show {
+        left: 0;
+    }
+}

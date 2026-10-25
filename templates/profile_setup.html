@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Profile Setup | Kaushal Setu{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Onboarding Wizard Header -->
+            <div class="card card-custom border-0 shadow-sm mb-4">
+                <div class="card-body p-4 text-center">
+                    <span class="badge bg-teal bg-opacity-10 text-teal px-3 py-2 rounded-pill fw-semibold mb-2">Step 1 of 2: Profile Customization</span>
+                    <h3 class="fw-bold text-navy mb-2">Welcome to Kaushal Setu, {{ user.full_name }}!</h3>
+                    <p class="text-muted mx-auto" style="max-width: 600px;">
+                        Set your career goal and current background so Kaushal Setu can benchmark your skills, pinpoint gaps, and generate your personalized 30-day learning roadmap.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Form Card -->
+            <div class="card card-custom border-0 shadow-sm">
+                <div class="card-body p-4 p-md-5">
+                    <form action="{{ url_for('profile_setup') }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                        <!-- Target Career Path Selection -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-navy">
+                                <i class="bi bi-compass text-teal me-1"></i> Target Career Goal <span class="text-danger">*</span>
+                            </label>
+                            <p class="text-muted small mb-3">Select the professional role you are preparing for:</p>
+
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="form-check p-0">
+                                        <input class="btn-check" type="radio" name="target_career" id="careerPython" value="Python Developer" checked>
+                                        <label class="btn btn-outline-secondary w-100 p-3 text-start h-100 d-flex flex-column justify-content-between" for="careerPython">
+                                            <div>
+                                                <i class="bi bi-filetype-py fs-3 text-teal d-block mb-2"></i>
+                                                <span class="fw-bold d-block text-dark">Python Developer</span>
+                                                <span class="text-muted small">Backend systems, automation, logic, algorithms & databases.</span>
+                                            </div>
+                                            <span class="badge bg-teal bg-opacity-25 text-teal mt-2 align-self-start">High Demand</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-check p-0">
+                                        <input class="btn-check" type="radio" name="target_career" id="careerWeb" value="Web Developer">
+                                        <label class="btn btn-outline-secondary w-100 p-3 text-start h-100 d-flex flex-column justify-content-between" for="careerWeb">
+                                            <div>
+                                                <i class="bi bi-globe fs-3 text-teal d-block mb-2"></i>
+                                                <span class="fw-bold d-block text-dark">Web Developer</span>
+                                                <span class="text-muted small">Frontend UI, responsive styling, JavaScript & Flask web apps.</span>
+                                            </div>
+                                            <span class="badge bg-teal bg-opacity-25 text-teal mt-2 align-self-start">Popular</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-check p-0">
+                                        <input class="btn-check" type="radio" name="target_career" id="careerData" value="Data Analyst">
+                                        <label class="btn btn-outline-secondary w-100 p-3 text-start h-100 d-flex flex-column justify-content-between" for="careerData">
+                                            <div>
+                                                <i class="bi bi-bar-chart-line fs-3 text-teal d-block mb-2"></i>
+                                                <span class="fw-bold d-block text-dark">Data Analyst</span>
+                                                <span class="text-muted small">Data cleaning, SQL analytics, Excel dashboards & insights.</span>
+                                            </div>
+                                            <span class="badge bg-teal bg-opacity-25 text-teal mt-2 align-self-start">Analytical</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Academic Information -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="degreeCourse" class="form-label fw-semibold text-secondary small">Degree / Course</label>
+                                <input type="text" class="form-control" id="degreeCourse" name="degree_course" value="{{ profile.degree_course or user.education_level }}" placeholder="e.g. BCA 5th Sem / B.Tech CS" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="academicYear" class="form-label fw-semibold text-secondary small">Current Academic Year</label>
+                                <select class="form-select" id="academicYear" name="academic_year">
+                                    <option value="1st Year">1st Year</option>
+                                    <option value="2nd Year">2nd Year</option>
+                                    <option value="3rd Year" selected>3rd Year</option>
+                                    <option value="Final Year">Final Year</option>
+                                    <option value="Recent Graduate">Recent Graduate</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Location & Existing Skills -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="preferredLocation" class="form-label fw-semibold text-secondary small">Preferred Job / Internship Location</label>
+                                <input type="text" class="form-control" id="preferredLocation" name="preferred_location" value="{{ profile.preferred_location or 'Lucknow / Remote' }}" placeholder="e.g. Lucknow, Noida, Remote">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="technicalSkills" class="form-label fw-semibold text-secondary small">Current Technical Skills (Comma-separated)</label>
+                                <input type="text" class="form-control" id="technicalSkills" name="technical_skills" value="{{ profile.technical_skills or '' }}" placeholder="e.g. C++, Basic Python, HTML, Excel">
+                            </div>
+                        </div>
+
+                        <!-- Areas of Interest -->
+                        <div class="mb-4">
+                            <label for="interests" class="form-label fw-semibold text-secondary small">Areas of Interest / Goals</label>
+                            <input type="text" class="form-control" id="interests" name="interests" value="{{ profile.interests or '' }}" placeholder="e.g. Building web applications, Machine Learning, Automation, Internships">
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">Skip to Dashboard</a>
+                            <button type="submit" class="btn btn-teal px-4 py-2">
+                                Save Profile & Begin Diagnostic Assessment <i class="bi bi-arrow-right ms-1"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

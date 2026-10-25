@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block title %}Skill Gap Analysis | Kaushal Setu{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge bg-teal text-white">Employability Engine</span>
+                <span class="badge bg-navy text-white">{{ data.career_path }}</span>
+            </div>
+            <h3 class="fw-bold text-navy mb-0">Skill Gap Analysis & Benchmark Report</h3>
+            <p class="text-muted small mb-0">Assessment completed on {{ data.assessment.taken_at }}</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('assessment', career=data.career_path) }}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-arrow-repeat me-1"></i> Retake Test
+            </a>
+            <a href="{{ url_for('roadmap') }}" class="btn btn-sm btn-teal shadow-sm">
+                <i class="bi bi-map me-1"></i> Go to 30-Day Roadmap &rarr;
+            </a>
+        </div>
+    </div>
+
+    <!-- Mathematical Formula Transparency Banner -->
+    <div class="alert alert-secondary border-0 bg-white shadow-sm p-3 mb-4 rounded-3">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <div class="small fw-bold text-navy mb-1"><i class="bi bi-calculator me-1 text-teal"></i> Mathematical Formulation Engine</div>
+                <div class="small text-muted">
+                    Skill Gap = <code>max(0, Target Benchmark - Current Score)</code> &nbsp;|&nbsp; 
+                    Readiness Score = <code>min(100, (Sum(Current) / Sum(Target)) &times; 100)</code>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end mt-2 mt-md-0">
+                <span class="badge bg-teal bg-opacity-10 text-teal px-3 py-2 fs-6 fw-bold">
+                    Overall Readiness: {{ data.readiness_percentage }}%
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts & Strategic Summary -->
+    <div class="row g-4 mb-4">
+        <!-- Chart Visualization Card -->
+        <div class="col-lg-7">
+            <div class="card card-custom border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold text-navy mb-0">
+                        <i class="bi bi-graph-up text-teal me-2"></i> Current Proficiency vs. Industry Benchmark
+                    </h6>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-outline-teal active" id="btnShowRadar" onclick="switchChart('radar')">Radar</button>
+                        <button type="button" class="btn btn-outline-teal" id="btnShowBar" onclick="switchChart('bar')">Bar</button>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div id="radarContainer" style="height: 320px; position: relative;">
+                        <canvas id="gapRadarChart"></canvas>
+                    </div>
+                    <div id="barContainer" style="height: 320px; position: relative; display: none;">
+                        <canvas id="gapBarChart"></canvas>
+                    </div>
+                    <div class="text-center small text-muted mt-3">
+                        <span class="badge bg-teal me-2">&nbsp;</span> Current Score &nbsp;&nbsp;&nbsp;
+                        <span class="badge bg-dark me-2">&nbsp;</span> Target Benchmark
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytical Highlights Card -->
+        <div class="col-lg-5">
+            <div class="card card-custom border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="fw-bold text-navy mb-0">
+                        <i class="bi bi-journal-check text-warning me-2"></i> Strategic Diagnostic Insights
+                    </h6>
+                </div>
+                <div class="card-body p-4 d-flex flex-column justify-content-between">
+                    <div>
+                        <!-- Strongest Skills -->
+                        <div class="mb-4">
+                            <div class="small fw-bold text-success text-uppercase mb-2">
+                                <i class="bi bi-check-circle-fill me-1"></i> Core Strengths Identified
+                            </div>
+                            {% if data.strongest_skills %}
+                                {% for s in data.strongest_skills %}
+                                <div class="d-flex justify-content-between align-items-center p-2 mb-2 bg-light rounded">
+                                    <span class="fw-semibold small text-dark">{{ s.skill_name }}</span>
+                                    <span class="badge bg-success bg-opacity-25 text-success">{{ s.current_score }}%</span>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <p class="small text-muted">Complete more modules to establish strong competencies.</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Priority Skill Gaps -->
+                        <div class="mb-3">
+                            <div class="small fw-bold text-danger text-uppercase mb-2">
+                                <i class="bi bi-exclamation-triangle-fill me-1"></i> Priority Focus Gaps
+                            </div>
+                            {% if data.priority_gaps %}
+                                {% for g in data.priority_gaps %}
+                                <div class="d-flex justify-content-between align-items-center p-2 mb-2 bg-light rounded">
+                                    <div>
+                                        <span class="fw-semibold small text-dark d-block">{{ g.skill_name }}</span>
+                                        <span class="text-muted" style="font-size: 0.72rem;">Target: {{ g.target_score }}% &bull; Current: {{ g.current_score }}%</span>
+                                    </div>
+                                    <span class="badge bg-{{ g.badge_class }}">{{ g.priority }} ({{ g.gap }}% gap)</span>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="p-2 bg-success bg-opacity-10 text-success rounded small">
+                                    Target standards met across evaluated topics!
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="pt-3 border-top">
+                        <a href="{{ url_for('roadmap') }}" class="btn btn-teal w-100 py-2">
+                            <i class="bi bi-calendar3 me-1"></i> Start Addressing Gaps via 30-Day Roadmap
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Skill Breakdown Table -->
+    <div class="card card-custom border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 border-bottom">
+            <h6 class="fw-bold text-navy mb-0">
+                <i class="bi bi-table text-teal me-2"></i> Comprehensive Competency Matrix
+            </h6>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Skill Domain</th>
+                            <th>Current Score</th>
+                            <th>Benchmark Target</th>
+                            <th>Identified Gap</th>
+                            <th>Priority Tier</th>
+                            <th>Recommended Next Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in data.breakdown %}
+                        <tr>
+                            <td class="ps-4 fw-bold text-navy">{{ row.skill_name }}</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress flex-grow-1" style="height: 6px; width: 70px;">
+                                        <div class="progress-bar bg-teal" style="width: {{ row.current_score }}%;"></div>
+                                    </div>
+                                    <span class="small fw-semibold">{{ row.current_score }}%</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary bg-opacity-25 text-dark">{{ row.target_score }}%</span>
+                            </td>
+                            <td>
+                                {% if row.gap > 0 %}
+                                    <span class="fw-bold text-danger">{{ row.gap }}%</span>
+                                {% else %}
+                                    <span class="badge bg-success">Met (0%)</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-{{ row.badge_class }}">{{ row.priority }}</span>
+                            </td>
+                            <td class="small text-muted">
+                                {{ row.recommendation }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Official Platform Disclaimer -->
+    <div class="card card-custom border-0 shadow-sm bg-light p-3 text-muted small">
+        <div class="d-flex align-items-start gap-2">
+            <i class="bi bi-shield-check fs-5 text-teal flex-shrink-0"></i>
+            <div>
+                <strong>Disclaimer:</strong> This readiness score is an indicative estimate based on the platform's skill assessment and benchmark requirements. It does not represent an official industry certification or guarantee of employment.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let radarInstance = null;
+let barInstance = null;
+
+document.addEventListener('DOMContentLoaded', function () {
+    const labels = {{ data.chart_data.labels | tojson }};
+    const current = {{ data.chart_data.current | tojson }};
+    const target = {{ data.chart_data.target | tojson }};
+
+    radarInstance = renderSkillRadarChart('gapRadarChart', labels, current, target);
+    barInstance = renderSkillBarChart('gapBarChart', labels, current, target);
+});
+
+function switchChart(type) {
+    const radarContainer = document.getElementById('radarContainer');
+    const barContainer = document.getElementById('barContainer');
+    const btnRadar = document.getElementById('btnShowRadar');
+    const btnBar = document.getElementById('btnShowBar');
+
+    if (type === 'radar') {
+        radarContainer.style.display = 'block';
+        barContainer.style.display = 'none';
+        btnRadar.classList.add('active');
+        btnBar.classList.remove('active');
+    } else {
+        radarContainer.style.display = 'none';
+        barContainer.style.display = 'block';
+        btnRadar.classList.remove('active');
+        btnBar.classList.add('active');
+    }
+}
+</script>
+{% endblock %}

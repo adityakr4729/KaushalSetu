@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Student Profile | Kaushal Setu{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-navy mb-1">Student Profile</h3>
+            <p class="text-muted small mb-0">Manage your educational background, target career, and verified technical competencies.</p>
+        </div>
+        <a href="{{ url_for('report') }}" class="btn btn-outline-navy btn-sm">
+            <i class="bi bi-file-earmark-pdf me-1"></i> View Skill Report
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left: Profile Summary Card -->
+        <div class="col-lg-4">
+            <div class="card card-custom border-0 shadow-sm p-4 text-center mb-4">
+                <div class="mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--teal-primary), var(--navy-primary)); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 700;">
+                    {{ user.full_name[:1] }}
+                </div>
+                <h5 class="fw-bold text-navy mb-1">{{ user.full_name }}</h5>
+                <p class="text-muted small mb-3">{{ user.email }}</p>
+
+                <div class="d-flex flex-wrap justify-content-center gap-1 mb-3">
+                    <span class="badge bg-navy text-white">{{ profile.target_career }}</span>
+                    <span class="badge bg-secondary bg-opacity-25 text-dark">{{ profile.degree_course or user.education_level }}</span>
+                    <span class="badge bg-teal bg-opacity-10 text-teal">{{ profile.academic_year }}</span>
+                </div>
+
+                <div class="p-3 bg-light rounded-3 text-start mb-3">
+                    <div class="small text-muted mb-1"><i class="bi bi-mortarboard-fill me-1 text-teal"></i> College / Institution:</div>
+                    <div class="fw-semibold small text-dark mb-2">{{ user.college_name or 'Not specified' }}</div>
+
+                    <div class="small text-muted mb-1"><i class="bi bi-geo-alt-fill me-1 text-teal"></i> Preferred Location:</div>
+                    <div class="fw-semibold small text-dark mb-2">{{ profile.preferred_location }}</div>
+
+                    <div class="small text-muted mb-1"><i class="bi bi-calendar-check me-1 text-teal"></i> Account Created:</div>
+                    <div class="fw-semibold small text-dark">{{ user.created_at | date_only }}</div>
+                </div>
+
+                <a href="{{ url_for('assessment') }}" class="btn btn-sm btn-teal w-100">
+                    <i class="bi bi-pencil-square me-1"></i> Retake Skill Assessment
+                </a>
+            </div>
+        </div>
+
+        <!-- Right: Edit Profile Form -->
+        <div class="col-lg-8">
+            <div class="card card-custom border-0 shadow-sm">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="fw-bold text-navy mb-0"><i class="bi bi-pencil-fill text-teal me-2"></i> Edit Student Information</h6>
+                </div>
+                <div class="card-body p-4">
+                    <form action="{{ url_for('profile') }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="profName" class="form-label small fw-semibold text-secondary">Full Name</label>
+                                <input type="text" class="form-control" id="profName" name="full_name" value="{{ user.full_name }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="profEmail" class="form-label small fw-semibold text-secondary">Email Address (Read-only)</label>
+                                <input type="email" class="form-control bg-light" id="profEmail" value="{{ user.email }}" readonly disabled>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="profCollege" class="form-label small fw-semibold text-secondary">College / Institute</label>
+                                <input type="text" class="form-control" id="profCollege" name="college_name" value="{{ user.college_name }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="profEdu" class="form-label small fw-semibold text-secondary">Education Level</label>
+                                <select class="form-select" id="profEdu" name="education_level">
+                                    <option value="BCA" {% if user.education_level == 'BCA' %}selected{% endif %}>BCA</option>
+                                    <option value="B.Tech CS/IT" {% if user.education_level == 'B.Tech CS/IT' %}selected{% endif %}>B.Tech CS/IT</option>
+                                    <option value="MCA" {% if user.education_level == 'MCA' %}selected{% endif %}>MCA</option>
+                                    <option value="B.Sc Computer Science" {% if user.education_level == 'B.Sc Computer Science' %}selected{% endif %}>B.Sc (CS/IT)</option>
+                                    <option value="Diploma in IT" {% if user.education_level == 'Diploma in IT' %}selected{% endif %}>Diploma in IT</option>
+                                    <option value="Other Degree" {% if user.education_level == 'Other Degree' %}selected{% endif %}>Other Degree</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="profCareer" class="form-label small fw-semibold text-secondary">Target Career Goal</label>
+                                <select class="form-select" id="profCareer" name="target_career">
+                                    <option value="Python Developer" {% if profile.target_career == 'Python Developer' %}selected{% endif %}>Python Developer</option>
+                                    <option value="Web Developer" {% if profile.target_career == 'Web Developer' %}selected{% endif %}>Web Developer</option>
+                                    <option value="Data Analyst" {% if profile.target_career == 'Data Analyst' %}selected{% endif %}>Data Analyst</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="profYear" class="form-label small fw-semibold text-secondary">Academic Year</label>
+                                <select class="form-select" id="profYear" name="academic_year">
+                                    <option value="1st Year" {% if profile.academic_year == '1st Year' %}selected{% endif %}>1st Year</option>
+                                    <option value="2nd Year" {% if profile.academic_year == '2nd Year' %}selected{% endif %}>2nd Year</option>
+                                    <option value="3rd Year" {% if profile.academic_year == '3rd Year' %}selected{% endif %}>3rd Year</option>
+                                    <option value="Final Year" {% if profile.academic_year == 'Final Year' %}selected{% endif %}>Final Year</option>
+                                    <option value="Recent Graduate" {% if profile.academic_year == 'Recent Graduate' %}selected{% endif %}>Recent Graduate</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="profDegree" class="form-label small fw-semibold text-secondary">Degree / Course Name</label>
+                                <input type="text" class="form-control" id="profDegree" name="degree_course" value="{{ profile.degree_course or '' }}" placeholder="e.g. BCA Semester V">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="profLocation" class="form-label small fw-semibold text-secondary">Preferred Job Location</label>
+                                <input type="text" class="form-control" id="profLocation" name="preferred_location" value="{{ profile.preferred_location or 'Lucknow / Remote' }}">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="profSkills" class="form-label small fw-semibold text-secondary">Current Technical Skills (Comma-separated)</label>
+                            <input type="text" class="form-control" id="profSkills" name="technical_skills" value="{{ profile.technical_skills or '' }}" placeholder="Python, Git, HTML, CSS, SQL">
+                            <div class="form-text">These skills assist our matching engine in calculating job and internship overlap.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="profInterests" class="form-label small fw-semibold text-secondary">Areas of Interest</label>
+                            <input type="text" class="form-control" id="profInterests" name="interests" value="{{ profile.interests or '' }}" placeholder="Web Apps, Microservices, Data Visualization, Placement Prep">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="profBio" class="form-label small fw-semibold text-secondary">Short Professional Bio / Objective</label>
+                            <textarea class="form-control" id="profBio" name="bio" rows="3" placeholder="Aspiring developer passionate about software engineering, web systems, and data analytics...">{{ profile.bio or '' }}</textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-teal px-4 py-2">
+                                <i class="bi bi-check2-circle me-1"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

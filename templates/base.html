@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>{% block title %}Kaushal Setu — Bridging the Skills-to-Employment Gap{% endblock %}</title>
+
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+{% if current_user %}
+    <!-- Authenticated Top Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container-fluid px-3">
+            <button class="btn btn-outline-light d-lg-none me-2" type="button" id="sidebarToggle" aria-label="Toggle Navigation">
+                <i class="bi bi-list fs-5"></i>
+            </button>
+
+            <a class="brand-mark" href="{{ url_for('dashboard') }}">
+                <div class="brand-icon">KS</div>
+                <div>
+                    <div class="brand-title">Kaushal Setu</div>
+                    <div class="brand-tagline">Assess. Learn. Apply.</div>
+                </div>
+            </a>
+
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-light dropdown-toggle d-flex align-items-center gap-2 py-1 px-3 rounded-pill" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle text-teal-light"></i>
+                        <span class="fw-medium d-none d-sm-inline">{{ current_user.full_name }}</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                        <li class="px-3 py-2 border-bottom">
+                            <div class="small fw-bold text-dark">{{ current_user.full_name }}</div>
+                            <div class="small text-muted text-truncate" style="max-width: 180px;">{{ current_user.email }}</div>
+                            {% if current_user.college_name %}
+                            <div class="badge bg-light text-dark mt-1">{{ current_user.college_name }}</div>
+                            {% endif %}
+                        </li>
+                        <li><a class="dropdown-item py-2" href="{{ url_for('profile') }}"><i class="bi bi-person me-2 text-teal"></i>Student Profile</a></li>
+                        <li><a class="dropdown-item py-2" href="{{ url_for('settings') }}"><i class="bi bi-gear me-2 text-teal"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item py-2 text-danger" href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- App Wrapper with Sidebar and Main Content -->
+    <div class="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebarNav">
+            <div class="sidebar-header">
+                <div class="small text-uppercase tracking-wider text-muted fw-bold mb-1" style="font-size: 0.7rem;">Student Navigation</div>
+                <div class="text-white small fw-semibold text-truncate">{{ current_user.full_name }}</div>
+            </div>
+            <ul class="sidebar-nav">
+                <li class="nav-item-custom">
+                    <a href="{{ url_for('dashboard') }}" class="nav-link-custom {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                        <i class="bi bi-grid-1x2"></i> <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item-custom">
+                    <a href="{{ url_for('profile') }}" class="nav-link-custom {% if request.endpoint == 'profile' %}active{% endif %}">
+                        <i class="bi bi-person-badge"></i> <span>Student Profile</span>
+                    </a>
+                </li>
+                <li class="nav-item-custom">
+                    <a href="{{ url_for('assessment') }}" class="nav-link-custom {% if request.endpoint == 'assessment' %}active{% endif %}">
+                        <i class="bi bi-clipboard2-check"></i> <span>Skill Assessment</span>
+                    </a>
+                </li>
+                <li class="nav-item-custom">
+                    <a href="{{ url_for('skill_gap') }}" class="nav-link-custom {% if request.endpoint == 'skill_gap' %}active{% endif %}">
+                        <i class="bi bi-graph-up-arrow"></i> <span>Skill Gap Analysis</span>
+                    </a>
+                </li>
+                <li class="nav-item-custom">
+                    <a href="{{ url_for('roadmap') }}" class="nav-link-custom {% if request.endpoint == 'roadmap' %}active{% endif %}">
+                        <i class="bi bi-map"></i> <span>Learning Roadmap</span>
+                    </a>
+                </li>
+                <li class="nav-item-custom">
+                    <a href="{{ url_for('opportunities') }}" class="nav-link-custom {% if request.endpoint == 'opportunities' %}active{% endif %}">
+                        <i class="bi bi-briefcase"></i> <span>Jobs & Internships</span>
+                    </a>
+                </li>
+                <li class="nav-item-custom">
+                    <a href="{{ url_for('progress') }}" class="nav-link-custom {% if request.endpoint == 'progress' %}active{% endif %}">
+                        <i class="bi bi-check2-circle"></i> <span>Progress Tracker</span>
+                    </a>
+                </li>
+                <li class="nav-item-custom">
+                    <a href="{{ url_for('report') }}" class="nav-link-custom {% if request.endpoint == 'report' %}active{% endif %}">
+                        <i class="bi bi-file-earmark-pdf"></i> <span>Skill Report</span>
+                    </a>
+                </li>
+                <li class="nav-item-custom">
+                    <a href="{{ url_for('settings') }}" class="nav-link-custom {% if request.endpoint == 'settings' %}active{% endif %}">
+                        <i class="bi bi-gear"></i> <span>Settings</span>
+                    </a>
+                </li>
+                <li class="nav-item-custom mt-3 pt-3 border-top border-secondary border-opacity-25">
+                    <a href="{{ url_for('logout') }}" class="nav-link-custom text-danger">
+                        <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Flash Message Alerts -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="container-fluid p-0 mb-3 no-print">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show shadow-sm" role="alert">
+                                {% if category == 'success' %}
+                                    <i class="bi bi-check-circle-fill me-2"></i>
+                                {% elif category == 'danger' or category == 'error' %}
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                {% elif category == 'warning' %}
+                                    <i class="bi bi-exclamation-circle-fill me-2"></i>
+                                {% else %}
+                                    <i class="bi bi-info-circle-fill me-2"></i>
+                                {% endif %}
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+
+            <footer class="mt-5 pt-3 border-top text-muted small text-center no-print">
+                <p class="mb-1"><strong>Kaushal Setu</strong> — Bridging the Skills-to-Employment Gap</p>
+                <p class="mb-0 text-muted" style="font-size: 0.8rem;">
+                    Your journey towards career readiness starts here.
+                </p>
+            </footer>
+        </main>
+    </div>
+
+{% else %}
+    <!-- Unauthenticated Layout (e.g. Login / Register or Error Pages) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="position-fixed top-0 end-0 p-3" style="z-index: 2000;">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show shadow" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% block unauth_content %}
+        <!-- Standalone Fallback / Error Container -->
+        <div class="container py-5 text-center">
+            <h1 class="display-4 fw-bold text-navy">{{ error_code or "Notice" }}</h1>
+            <p class="lead text-muted">{{ error_message or "Please proceed to the login window." }}</p>
+            <a href="{{ url_for('login') }}" class="btn btn-teal px-4 py-2 mt-3">Go to Login Window</a>
+        </div>
+    {% endblock %}
+{% endif %}
+
+<!-- Bootstrap 5.3 Bundle JS with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+<!-- Custom JS -->
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

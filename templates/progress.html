@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Progress Tracker | Kaushal Setu{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div>
+            <h3 class="fw-bold text-navy mb-1">Learning Progress Tracker</h3>
+            <p class="text-muted small mb-0">Monitor your 30-day curriculum completion, hours logged, and diagnostic growth milestones.</p>
+        </div>
+        <a href="{{ url_for('roadmap') }}" class="btn btn-teal btn-sm shadow-sm">
+            <i class="bi bi-map me-1"></i> Interactive Roadmap View
+        </a>
+    </div>
+
+    <!-- Metrics Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="metric-card accent-teal shadow-sm h-100">
+                <div class="metric-label">Overall Completion</div>
+                <div class="metric-value text-teal">{{ roadmap.completion_percentage }}%</div>
+                <div class="small text-muted mt-1">{{ roadmap.completed_count }} of {{ roadmap.total_tasks }} tasks</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="metric-card accent-navy shadow-sm h-100">
+                <div class="metric-label">Completed Hours</div>
+                <div class="metric-value text-navy">{{ roadmap.completed_hours }}</div>
+                <div class="small text-muted mt-1">Out of {{ roadmap.total_hours }} total hrs</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="metric-card accent-warning shadow-sm h-100">
+                <div class="metric-label">Pending Milestones</div>
+                <div class="metric-value text-warning">{{ roadmap.pending_count }}</div>
+                <div class="small text-muted mt-1">Tasks remaining</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="metric-card accent-success shadow-sm h-100">
+                <div class="metric-label">Assessments Logged</div>
+                <div class="metric-value text-success">{{ history | length }}</div>
+                <div class="small text-muted mt-1">Evaluation attempts</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4-Week Progress Distribution -->
+    <div class="card card-custom border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 border-bottom">
+            <h6 class="fw-bold text-navy mb-0">
+                <i class="bi bi-bar-chart-steps text-teal me-2"></i> Weekly Curriculum Completion Breakdown
+            </h6>
+        </div>
+        <div class="card-body p-4">
+            <div class="row g-4 text-center">
+                {% for w in [1, 2, 3, 4] %}
+                {% set st = roadmap.week_stats[w] %}
+                <div class="col-6 col-md-3">
+                    <div class="p-3 border rounded-3 bg-light">
+                        <span class="badge bg-navy text-white mb-2">Week {{ w }}</span>
+                        <div class="fs-4 fw-bold text-navy mb-1">{{ st.percentage }}%</div>
+                        <div class="progress mb-2" style="height: 6px;">
+                            <div class="progress-bar bg-teal" style="width: {{ st.percentage }}%;"></div>
+                        </div>
+                        <div class="small text-muted">{{ st.completed }} / {{ st.total }} tasks done</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Complete Task Inventory Table -->
+    <div class="card card-custom border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+            <h6 class="fw-bold text-navy mb-0">
+                <i class="bi bi-check2-all text-teal me-2"></i> Full Roadmap Task Inventory
+            </h6>
+            <span class="badge bg-light text-secondary border small">{{ roadmap.all_tasks | length }} Total Curriculum Items</span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Status</th>
+                            <th>Week</th>
+                            <th>Milestone Title</th>
+                            <th>Skill Category</th>
+                            <th>Est. Hours</th>
+                            <th>Applied Mini-Project</th>
+                            <th class="pe-4 text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in roadmap.all_tasks %}
+                        <tr id="task-card-{{ t.id }}" class="{% if t.is_completed %}table-light{% endif %}">
+                            <td class="ps-4">
+                                <input class="form-check-input task-checkbox-toggle" type="checkbox"
+                                       data-task-id="{{ t.id }}" id="progChk-{{ t.id }}" {% if t.is_completed %}checked{% endif %}>
+                            </td>
+                            <td><span class="badge bg-secondary bg-opacity-25 text-dark">W{{ t.week_number }}</span></td>
+                            <td>
+                                <strong class="text-navy d-block">{{ t.title }}</strong>
+                                {% if t.is_completed and t.completed_at %}
+                                <span class="text-success small" style="font-size: 0.72rem;">Done: {{ t.completed_at }}</span>
+                                {% endif %}
+                            </td>
+                            <td><span class="badge bg-light text-secondary border">{{ t.skill_name }}</span></td>
+                            <td>{{ t.estimated_hours }} hrs</td>
+                            <td class="small text-muted" style="max-width: 280px;">{{ t.mini_project }}</td>
+                            <td class="pe-4 text-end">
+                                <a href="{{ t.resource_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-teal py-0 px-2" style="font-size: 0.75rem;">
+                                    Resource <i class="bi bi-box-arrow-up-right"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

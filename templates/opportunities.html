@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Jobs & Internships | Kaushal Setu{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Header -->
+    <div class="card card-custom border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div>
+                    <span class="badge bg-teal bg-opacity-10 text-teal px-3 py-1 rounded-pill small fw-semibold mb-2">
+                        <i class="bi bi-briefcase-fill me-1"></i> Career Opportunity Engine
+                    </span>
+                    <h3 class="fw-bold text-navy mb-1">Skill-Matched Opportunities</h3>
+                    <p class="text-muted small mb-0">
+                        Matches your current verified and assessed skill set against real-world job & internship requisites.
+                    </p>
+                </div>
+                <div class="text-end">
+                    <span class="demo-banner">
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i> DEMO DATA — NOT A VERIFIED LIVE VACANCY
+                    </span>
+                    <div class="text-muted mt-1" style="font-size: 0.72rem;">
+                        Schema structured for National Career Service (NCS) API integration
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Form Bar -->
+    <div class="card card-custom border-0 shadow-sm mb-4">
+        <div class="card-body p-3">
+            <form action="{{ url_for('opportunities') }}" method="GET" class="row g-2 align-items-center">
+                <!-- Career Filter -->
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold text-muted mb-1">Career Goal</label>
+                    <select class="form-select form-select-sm" name="career" onchange="this.form.submit()">
+                        <option value="All" {% if current_career == 'All' %}selected{% endif %}>All Careers</option>
+                        <option value="Python Developer" {% if current_career == 'Python Developer' %}selected{% endif %}>Python Developer</option>
+                        <option value="Web Developer" {% if current_career == 'Web Developer' %}selected{% endif %}>Web Developer</option>
+                        <option value="Data Analyst" {% if current_career == 'Data Analyst' %}selected{% endif %}>Data Analyst</option>
+                    </select>
+                </div>
+
+                <!-- Type Filter -->
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold text-muted mb-1">Opportunity Type</label>
+                    <select class="form-select form-select-sm" name="type" onchange="this.form.submit()">
+                        <option value="All" {% if current_type == 'All' %}selected{% endif %}>All Types</option>
+                        <option value="Full-time Job" {% if current_type == 'Full-time Job' %}selected{% endif %}>Full-time Job</option>
+                        <option value="Internship" {% if current_type == 'Internship' %}selected{% endif %}>Internship</option>
+                        <option value="Apprenticeship" {% if current_type == 'Apprenticeship' %}selected{% endif %}>Apprenticeship</option>
+                    </select>
+                </div>
+
+                <!-- Location Filter -->
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold text-muted mb-1">Location</label>
+                    <select class="form-select form-select-sm" name="location" onchange="this.form.submit()">
+                        <option value="All" {% if current_location == 'All' %}selected{% endif %}>All Locations</option>
+                        <option value="Remote" {% if current_location == 'Remote' %}selected{% endif %}>Remote</option>
+                        <option value="Lucknow" {% if current_location == 'Lucknow' %}selected{% endif %}>Lucknow</option>
+                        <option value="Noida" {% if current_location == 'Noida' %}selected{% endif %}>Noida / Delhi NCR</option>
+                        <option value="Bengaluru" {% if current_location == 'Bengaluru' %}selected{% endif %}>Bengaluru</option>
+                    </select>
+                </div>
+
+                <!-- Skill Search -->
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold text-muted mb-1">Required Skill</label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="skill" value="{{ current_skill }}" placeholder="e.g. SQL, Git">
+                        <button class="btn btn-teal" type="submit"><i class="bi bi-search"></i></button>
+                        {% if current_skill or current_career != 'All' or current_type != 'All' or current_location != 'All' %}
+                        <a href="{{ url_for('opportunities') }}" class="btn btn-outline-secondary" title="Clear Filters"><i class="bi bi-x"></i></a>
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Opportunity Listings -->
+    <div class="row g-3">
+        {% if opportunities %}
+            {% for opp in opportunities %}
+            <div class="col-12 col-xl-6">
+                <div class="opportunity-card shadow-sm h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <!-- Top Header with Match Badge -->
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <span class="badge bg-secondary bg-opacity-25 text-dark small me-1">{{ opp.opportunity_type }}</span>
+                                <span class="badge bg-navy text-white small">{{ opp.career_path }}</span>
+                            </div>
+                            <span class="badge bg-{{ opp.match_level_class }} px-2 py-1 fs-6">
+                                <i class="bi bi-bullseye me-1"></i> {{ opp.match_percentage }}% Match
+                            </span>
+                        </div>
+
+                        <h5 class="fw-bold text-navy mb-1">{{ opp.title }}</h5>
+                        <div class="text-muted small mb-3">
+                            <strong>{{ opp.company }}</strong> &bull; <i class="bi bi-geo-alt"></i> {{ opp.location }}
+                            {% if opp.is_remote %}<span class="badge bg-info bg-opacity-10 text-info ms-1">Remote Allowed</span>{% endif %}
+                        </div>
+
+                        <!-- Match Reason -->
+                        <div class="alert alert-light border small py-2 px-3 mb-3">
+                            <i class="bi bi-info-circle-fill text-teal me-1"></i> <strong>Match Analysis:</strong> {{ opp.match_reason }}
+                        </div>
+
+                        <p class="text-secondary small mb-3" style="line-height: 1.5;">
+                            {{ opp.description }}
+                        </p>
+
+                        <!-- Skill Overlap Badges -->
+                        <div class="mb-3">
+                            <div class="small fw-semibold text-secondary mb-1">Skill Alignment Breakdown:</div>
+                            <div class="d-flex flex-wrap gap-1">
+                                <!-- Matched Skills in Green -->
+                                {% for s in opp.matched_skills %}
+                                <span class="badge bg-success bg-opacity-15 text-success border border-success border-opacity-25" title="You have this skill">
+                                    <i class="bi bi-check-lg me-1"></i> {{ s }}
+                                </span>
+                                {% endfor %}
+
+                                <!-- Missing Skills in Orange -->
+                                {% for s in opp.missing_skills %}
+                                <span class="badge bg-warning bg-opacity-15 text-warning border border-warning border-opacity-25" title="Focus area to learn">
+                                    <i class="bi bi-dash me-1"></i> Need: {{ s }}
+                                </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Eligibility -->
+                        <div class="small text-muted mb-3">
+                            <i class="bi bi-mortarboard me-1"></i> <strong>Eligibility:</strong> {{ opp.eligibility }}
+                        </div>
+                    </div>
+
+                    <!-- Card Footer -->
+                    <div class="pt-3 border-top d-flex flex-wrap justify-content-between align-items-center gap-2">
+                        <div class="small text-muted" style="font-size: 0.75rem;">
+                            Source: {{ opp.source }} &bull; Deadline: {{ opp.deadline }}
+                        </div>
+                        <a href="{{ opp.application_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-teal px-3 py-1">
+                            Apply via Portal <i class="bi bi-box-arrow-up-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="card card-custom border-0 shadow-sm p-5 text-center">
+                    <i class="bi bi-search fs-1 text-muted mb-2"></i>
+                    <h5 class="fw-bold text-navy">No Matching Opportunities Found</h5>
+                    <p class="text-muted small">Try broadening your search filter or selecting 'All Careers'.</p>
+                    <div>
+                        <a href="{{ url_for('opportunities') }}" class="btn btn-sm btn-teal">Reset All Filters</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

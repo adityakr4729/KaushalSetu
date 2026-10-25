@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}Skill Diagnostic Report | Kaushal Setu{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Top Action Bar (Hidden during Print) -->
+    <div class="card card-custom border-0 shadow-sm mb-4 no-print">
+        <div class="card-body p-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div>
+                <span class="badge bg-teal bg-opacity-10 text-teal px-3 py-1 rounded-pill small fw-semibold">
+                    <i class="bi bi-file-earmark-check-fill me-1"></i> Formal Diagnostic Report
+                </span>
+                <span class="text-muted small ms-2">Ready to save as PDF or print for placement reviews.</span>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('skill_gap') }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Analysis
+                </a>
+                <button type="button" class="btn btn-sm btn-teal shadow-sm" onclick="window.print()">
+                    <i class="bi bi-printer-fill me-1"></i> Print / Save as PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Official Printable Report Container -->
+    <div class="card card-custom border-0 shadow-sm p-4 p-md-5 bg-white" id="printableReport">
+        <!-- Formal Report Header -->
+        <div class="report-print-header d-flex justify-content-between align-items-start pb-3 mb-4 border-bottom border-2 border-dark">
+            <div class="d-flex align-items-center gap-3">
+                <div class="brand-icon" style="width: 48px; height: 48px; font-size: 1.4rem;">KS</div>
+                <div>
+                    <h2 class="fw-bold mb-0 text-navy" style="letter-spacing: -0.5px;">KAUSHAL SETU</h2>
+                    <div class="text-teal fw-semibold small text-uppercase tracking-wider">Bridging the Skills-to-Employment Gap</div>
+                    <div class="text-muted small">Student Career Readiness & Employability Diagnostic</div>
+                </div>
+            </div>
+            <div class="text-end">
+                <span class="badge bg-dark text-white px-3 py-1 text-uppercase">Diagnostic Evaluation</span>
+                <div class="text-muted small mt-1">Date: <strong>{{ assessment.taken_at }}</strong></div>
+                <div class="text-muted small">Report ID: <strong>KS-{{ assessment.id }}-{{ user.id }}</strong></div>
+            </div>
+        </div>
+
+        <!-- Student & Assessment Metadata Grid -->
+        <div class="p-3 bg-light rounded-3 mb-4 border">
+            <div class="row g-3">
+                <div class="col-6 col-md-3">
+                    <div class="small text-muted text-uppercase fw-semibold" style="font-size: 0.72rem;">Student Name</div>
+                    <div class="fw-bold text-navy">{{ user.full_name }}</div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="small text-muted text-uppercase fw-semibold" style="font-size: 0.72rem;">College / Institute</div>
+                    <div class="fw-bold text-navy">{{ user.college_name or 'Independent Learner' }}</div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="small text-muted text-uppercase fw-semibold" style="font-size: 0.72rem;">Degree & Academic Year</div>
+                    <div class="fw-bold text-navy">{{ profile.degree_course or user.education_level }} ({{ profile.academic_year }})</div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="small text-muted text-uppercase fw-semibold" style="font-size: 0.72rem;">Target Career Role</div>
+                    <div class="fw-bold text-teal">{{ assessment.career_path }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Executive Summary Banner -->
+        <div class="row g-3 mb-4 align-items-center">
+            <div class="col-md-8">
+                <h5 class="fw-bold text-navy mb-1">Employability Readiness Assessment</h5>
+                <p class="text-muted small mb-0">
+                    Calculated by benchmarking student competency against target entry-level standards required for junior <strong>{{ assessment.career_path }}</strong> positions.
+                </p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <div class="p-3 rounded-3 bg-teal bg-opacity-10 d-inline-block text-center border border-teal border-opacity-25" style="min-width: 180px;">
+                    <div class="small text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Overall Readiness</div>
+                    <div class="display-6 fw-bold text-teal mb-0">{{ assessment.readiness_percentage }}%</div>
+                    <div class="small text-secondary" style="font-size: 0.72rem;">Formula Bounded Scale (0-100)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comprehensive Skills Matrix Table -->
+        <h6 class="fw-bold text-navy mb-3 text-uppercase" style="letter-spacing: 0.5px; font-size: 0.85rem;">
+            I. Competency Benchmarking Matrix
+        </h6>
+        <div class="table-responsive mb-4">
+            <table class="table table-bordered table-sm align-middle" style="font-size: 0.85rem;">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Skill Category</th>
+                        <th class="text-center">Current Score</th>
+                        <th class="text-center">Benchmark Target</th>
+                        <th class="text-center">Identified Gap</th>
+                        <th class="text-center">Priority Status</th>
+                        <th>Recommended Developmental Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in skill_data.breakdown %}
+                    <tr>
+                        <td class="ps-3 fw-bold text-navy">{{ row.skill_name }}</td>
+                        <td class="text-center fw-semibold text-teal">{{ row.current_score }}%</td>
+                        <td class="text-center text-muted">{{ row.target_score }}%</td>
+                        <td class="text-center fw-bold {% if row.gap > 0 %}text-danger{% else %}text-success{% endif %}">
+                            {% if row.gap > 0 %}{{ row.gap }}%{% else %}Target Met{% endif %}
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-{{ row.badge_class }}">{{ row.priority }}</span>
+                        </td>
+                        <td class="small text-muted">{{ row.recommendation }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Strengths vs Gaps 2-Column Overview -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <div class="p-3 border rounded-3 bg-light h-100">
+                    <h6 class="fw-bold text-success mb-2" style="font-size: 0.85rem;">
+                        <i class="bi bi-check-circle-fill me-1"></i> Core Strengths Identified
+                    </h6>
+                    <ul class="mb-0 ps-3 small text-secondary">
+                        {% for s in skill_data.strongest_skills %}
+                        <li class="mb-1"><strong>{{ s.skill_name }}</strong> (Scored {{ s.current_score }}%) — Demonstrates foundational competency.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 border rounded-3 bg-light h-100">
+                    <h6 class="fw-bold text-danger mb-2" style="font-size: 0.85rem;">
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i> Priority Action Gaps
+                    </h6>
+                    <ul class="mb-0 ps-3 small text-secondary">
+                        {% for g in skill_data.priority_gaps %}
+                        <li class="mb-1"><strong>{{ g.skill_name }}</strong> (Gap: {{ g.gap }}%) — High developmental impact for placement readiness.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Personalized 30-Day Learning Plan -->
+        <h6 class="fw-bold text-navy mb-3 text-uppercase" style="letter-spacing: 0.5px; font-size: 0.85rem;">
+            II. Structured 30-Day Developmental Plan
+        </h6>
+        <div class="table-responsive mb-4">
+            <table class="table table-bordered table-sm align-middle" style="font-size: 0.82rem;">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 10%;">Week</th>
+                        <th style="width: 25%;">Milestone Focus</th>
+                        <th style="width: 15%;">Skill Domain</th>
+                        <th style="width: 30%;">Applied Hands-on Project</th>
+                        <th style="width: 20%;">Curated Resource</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in roadmap.all_tasks %}
+                    <tr>
+                        <td class="fw-bold text-navy">Week {{ t.week_number }}</td>
+                        <td>{{ t.title }}</td>
+                        <td><span class="badge bg-light text-dark border">{{ t.skill_name }}</span></td>
+                        <td class="small text-muted">{{ t.mini_project }}</td>
+                        <td class="small"><a href="{{ t.resource_url }}" target="_blank" class="text-teal text-decoration-none">{{ t.resource_title }}</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Recommendations & Disclaimer -->
+        <div class="p-3 bg-light rounded-3 border mb-3 small text-muted">
+            <h6 class="fw-bold text-navy mb-1" style="font-size: 0.85rem;">III. Next Steps for Student</h6>
+            <ol class="mb-2 ps-3">
+                <li>Follow the 4-week structured roadmap schedule, committing 3–4 hours per milestone.</li>
+                <li>Complete and push code for each applied mini-project to a public GitHub repository.</li>
+                <li>Retake the Kaushal Setu diagnostic assessment after completing Week 2 and Week 4 to verify growth.</li>
+                <li>Review the job & internship matching portal to track entry-level opportunities as your match percentage increases.</li>
+            </ol>
+            <p class="mb-0 text-muted" style="font-size: 0.72rem;">
+                <strong>Official Note:</strong> This diagnostic report is generated by Kaushal Setu for skill-gap mapping and career readiness tracking. It does not replace official university grading or accredited professional certifications.
+            </p>
+        </div>
+
+        <!-- Signature Lines for Print -->
+        <div class="row pt-4 mt-4 border-top text-center" style="font-size: 0.8rem;">
+            <div class="col-4">
+                <div class="border-top border-dark mx-auto" style="width: 80%; padding-top: 5px;">Student Signature</div>
+                <div class="text-muted small">{{ user.full_name }}</div>
+            </div>
+            <div class="col-4">
+                <div class="border-top border-dark mx-auto" style="width: 80%; padding-top: 5px;">Academic / Placement Reviewer</div>
+                <div class="text-muted small">Career Development & Placement Cell</div>
+            </div>
+            <div class="col-4">
+                <div class="border-top border-dark mx-auto" style="width: 80%; padding-top: 5px;">Kaushal Setu System</div>
+                <div class="text-muted small">Automated Evaluation Engine</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

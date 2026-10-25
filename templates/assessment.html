@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Skill Assessment | Kaushal Setu{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Header with Career Switcher -->
+    <div class="card card-custom border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+            <div class="row align-items-center">
+                <div class="col-md-7">
+                    <span class="badge bg-teal bg-opacity-10 text-teal px-3 py-1 rounded-pill small fw-semibold mb-2">
+                        <i class="bi bi-patch-check-fill me-1"></i> Technical Diagnostic
+                    </span>
+                    <h3 class="fw-bold text-navy mb-1">Diagnostic Skill Assessment</h3>
+                    <p class="text-muted small mb-0">
+                        Evaluating competency for <strong>{{ career_path }}</strong>. Answer all 12 questions to calculate your skill readiness and generate a targeted 30-day learning roadmap.
+                    </p>
+                </div>
+                <div class="col-md-5 text-md-end mt-3 mt-md-0">
+                    <div class="btn-group" role="group" aria-label="Career Selection">
+                        <a href="{{ url_for('assessment', career='Python Developer') }}" class="btn btn-sm {% if career_path == 'Python Developer' %}btn-teal{% else %}btn-outline-secondary{% endif %}">
+                            Python Dev
+                        </a>
+                        <a href="{{ url_for('assessment', career='Web Developer') }}" class="btn btn-sm {% if career_path == 'Web Developer' %}btn-teal{% else %}btn-outline-secondary{% endif %}">
+                            Web Dev
+                        </a>
+                        <a href="{{ url_for('assessment', career='Data Analyst') }}" class="btn btn-sm {% if career_path == 'Data Analyst' %}btn-teal{% else %}btn-outline-secondary{% endif %}">
+                            Data Analyst
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sticky Progress Bar & Question Counter -->
+    <div class="card card-custom border-0 shadow-sm sticky-top mb-4" style="top: 70px; z-index: 1020;">
+        <div class="card-body p-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="small fw-semibold text-secondary">
+                    <i class="bi bi-clock me-1 text-teal"></i> Diagnostic Progress
+                </span>
+                <span class="badge bg-navy text-white" id="assessmentProgressCount">
+                    0 / {{ total_questions }} Answered
+                </span>
+            </div>
+            <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-teal" id="assessmentProgressBar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assessment Form -->
+    <form id="assessmentForm" action="{{ url_for('submit_assessment') }}" method="POST" data-total="{{ total_questions }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <input type="hidden" name="career_path" value="{{ career_path }}">
+
+        {% for q in questions %}
+        <div class="question-card shadow-sm" id="card-{{ q.id }}">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-navy text-white rounded-circle" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;">
+                        {{ loop.index }}
+                    </span>
+                    <span class="badge bg-light text-secondary border small">{{ q.category }}</span>
+                </div>
+                <span class="badge bg-teal bg-opacity-10 text-teal small">{{ q.skill_key }}</span>
+            </div>
+
+            <h5 class="fw-bold text-dark mb-3 mt-2" style="font-size: 1.05rem; line-height: 1.4;">
+                {{ q.question }}
+            </h5>
+
+            <div class="options-container">
+                {% for opt in q.options %}
+                <label class="option-label" for="opt-{{ q.id }}-{{ loop.index0 }}">
+                    <input class="form-check-input me-3" type="radio" name="{{ q.id }}" id="opt-{{ q.id }}-{{ loop.index0 }}" value="{{ loop.index0 }}" required>
+                    <span class="option-text text-dark" style="font-size: 0.95rem;">{{ opt }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Disclaimer & Submit Area -->
+        <div class="card card-custom border-0 shadow-sm p-4 text-center mt-4 mb-5">
+            <div class="alert alert-info py-2 small mb-3 text-start mx-auto" style="max-width: 720px;">
+                <i class="bi bi-info-circle-fill me-1"></i>
+                <strong>Notice:</strong> This assessment provides an initial algorithmic estimation of core skills to map missing competencies. It is not an official industry accreditation or guaranteed certification.
+            </div>
+
+            <div>
+                <button type="submit" id="submitAssessmentBtn" class="btn btn-teal px-5 py-3 fw-bold fs-6 shadow">
+                    <i class="bi bi-check2-circle me-2"></i> Submit Assessment & View Skill Gap Report
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

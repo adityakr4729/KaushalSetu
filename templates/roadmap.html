@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}30-Day Learning Roadmap | Kaushal Setu{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Header -->
+    <div class="card card-custom border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+            <div class="row align-items-center">
+                <div class="col-lg-7">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge bg-teal text-white">Personalized Curriculum</span>
+                        <span class="badge bg-navy text-white">{{ roadmap.career_path }}</span>
+                    </div>
+                    <h3 class="fw-bold text-navy mb-1">30-Day Targeted Learning Roadmap</h3>
+                    <p class="text-muted small mb-0">
+                        Structured across 4 weekly stages to systematically close your identified skill gaps. Each milestone features legitimate free study documentation and an applied hands-on mini-project.
+                    </p>
+                </div>
+                <div class="col-lg-5 text-lg-end mt-3 mt-lg-0">
+                    <div class="p-3 bg-light rounded-3 d-inline-block text-start" style="min-width: 240px;">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="small fw-bold text-navy">Roadmap Progress</span>
+                            <span class="fw-bold text-teal" id="roadmapPercentageText">{{ roadmap.completion_percentage }}%</span>
+                        </div>
+                        <div class="progress mb-2" style="height: 8px;">
+                            <div class="progress-bar bg-teal" id="roadmapMainProgress" style="width: {{ roadmap.completion_percentage }}%;"></div>
+                        </div>
+                        <div class="small text-muted d-flex justify-content-between">
+                            <span>{{ roadmap.completed_count }} / {{ roadmap.total_tasks }} Tasks Completed</span>
+                            <span>{{ roadmap.completed_hours }} / {{ roadmap.total_hours }} Hrs</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4 Weekly Stages -->
+    {% for week_num in [1, 2, 3, 4] %}
+        {% set w_tasks = roadmap.structured_weeks[week_num] %}
+        {% set w_stat = roadmap.week_stats[week_num] %}
+        
+        <div class="card card-custom border-0 shadow-sm mb-4">
+            <!-- Week Header -->
+            <div class="card-header bg-white py-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div>
+                    <h5 class="fw-bold text-navy mb-0">
+                        <span class="badge bg-navy text-white me-2">Week {{ week_num }}</span>
+                        {% if week_num == 1 %}
+                            Foundational Mastery & Prerequisite Strengthening
+                        {% elif week_num == 2 %}
+                            Intermediate Data, Architecture & Queries
+                        {% elif week_num == 3 %}
+                            Professional Tooling, Git Versioning & Best Practices
+                        {% else %}
+                            Capstone Project Development & Portfolio Documentation
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="small text-muted">
+                        <strong>{{ w_stat.completed }}</strong> of <strong>{{ w_stat.total }}</strong> tasks complete ({{ w_stat.percentage }}%)
+                    </div>
+                    <div class="progress" style="width: 100px; height: 6px;">
+                        <div class="progress-bar bg-teal" style="width: {{ w_stat.percentage }}%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task List for this Week -->
+            <div class="card-body p-4">
+                {% if w_tasks %}
+                    {% for task in w_tasks %}
+                    <div class="roadmap-task-card {% if task.is_completed %}task-done{% elif task.is_priority_focus %}priority-focus{% endif %}" id="task-card-{{ task.id }}">
+                        <div class="d-flex align-items-start gap-3">
+                            <!-- Interactive Checkbox -->
+                            <div class="form-check mt-1">
+                                <input class="form-check-input task-checkbox-toggle" type="checkbox" style="width: 1.35rem; height: 1.35rem; cursor: pointer;"
+                                       data-task-id="{{ task.id }}" id="chk-{{ task.id }}" {% if task.is_completed %}checked{% endif %}>
+                            </div>
+
+                            <!-- Content -->
+                            <div class="flex-grow-1">
+                                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-1">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <h6 class="fw-bold text-navy mb-0">{{ task.title }}</h6>
+                                        <span class="badge bg-light text-secondary border small">{{ task.skill_name }}</span>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        {% if task.is_priority_focus %}
+                                        <span class="badge bg-warning bg-opacity-25 text-warning small">
+                                            <i class="bi bi-exclamation-circle-fill me-1"></i> Priority Gap Focus
+                                        </span>
+                                        {% endif %}
+                                        <span class="badge bg-secondary bg-opacity-10 text-muted small">
+                                            <i class="bi bi-clock me-1"></i> {{ task.estimated_hours }} Hours
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <p class="text-secondary small mb-2">{{ task.description }}</p>
+
+                                <!-- Mini-Project Box -->
+                                <div class="p-2 rounded bg-light bg-opacity-75 small mb-2 border-start border-3 border-teal">
+                                    <strong class="text-navy">Applied Mini-Project:</strong> {{ task.mini_project }}
+                                </div>
+
+                                <!-- External Legitimate Learning Resource Link -->
+                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-1">
+                                    <a href="{{ task.resource_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-teal py-1 px-3">
+                                        <i class="bi bi-box-arrow-up-right me-1"></i> Resource: {{ task.resource_title }}
+                                    </a>
+                                    {% if task.completed_at %}
+                                    <span class="text-muted small" style="font-size: 0.75rem;">
+                                        <i class="bi bi-check-circle-fill text-success me-1"></i> Completed on {{ task.completed_at }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted small mb-0">No tasks scheduled for this week.</p>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
