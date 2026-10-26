@@ -44,7 +44,8 @@ Kaushal setu/
 │
 ├── app.py                      # Flask application factory, routes & error handlers
 ├── config.py                   # Configuration classes (Development, Testing)
-├── requirements.txt            # Python dependencies (Flask, Werkzeug, python-dotenv, pytest)
+├── requirements.txt            # Python dependencies (Flask, Werkzeug, python-dotenv, gunicorn, pytest)
+├── Procfile                    # Web service process configuration for cloud deployment (Render)
 ├── README.md                   # Complete documentation & project guide
 ├── .env.example                # Sample environment file template
 ├── .gitignore                  # Git exclusions for venv, SQLite, and caches
@@ -147,6 +148,22 @@ Visit:
 http://127.0.0.1:5000
 ```
 When you open this URL, **the first page that appears is the professional split-screen login/signup screen**.
+
+---
+
+## 🌐 Cloud Deployment (Render)
+
+Kaushal Setu is configured for 1-click deployment on [Render](https://render.com) as a Python Web Service:
+
+- **Repository:** Connect your GitHub repository (`https://github.com/adityakr4729/KaushalSetu`)
+- **Environment:** `Python 3`
+- **Region:** Any (e.g., Singapore or Oregon)
+- **Branch:** `main`
+- **Build Command:** `pip install -r requirements.txt`
+- **Start Command:** `gunicorn app:app`
+
+*(The included `Procfile` and `requirements.txt` pre-configure the Gunicorn WSGI production server, automatic SQLite database initialization, and dynamic `$PORT` binding).*
+
 
 ---
 

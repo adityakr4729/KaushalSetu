@@ -3,7 +3,7 @@ from flask import (
     Flask, render_template, request, redirect, url_for, flash,
     session, jsonify, g, abort
 )
-from config import Config, DevelopmentConfig
+from config import Config, DevelopmentConfig, ProductionConfig
 from database import get_db, init_db, init_app
 from services import (
     register_user, authenticate_user, login_user, logout_user,
@@ -14,8 +14,14 @@ from services import (
     get_student_roadmap, toggle_task_completion, get_matched_opportunities
 )
 
-def create_app(config_class=DevelopmentConfig):
+def create_app(config_class=None):
     """Application factory for Kaushal Setu."""
+    if config_class is None:
+        if os.environ.get('FLASK_ENV') == 'production' or os.environ.get('RENDER'):
+            config_class = ProductionConfig
+        else:
+            config_class = DevelopmentConfig
+
     app = Flask(__name__)
     app.config.from_object(config_class)
     
@@ -542,5 +548,5 @@ def create_app(config_class=DevelopmentConfig):
 app = create_app()
 
 if __name__ == '__main__':
-    # Default local development server on port 5000
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=app.config.get('DEBUG', False))
